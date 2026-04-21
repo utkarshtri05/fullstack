@@ -5,10 +5,18 @@ import { absoluteUrl } from "@/lib/utils";
 import { and, eq } from "drizzle-orm";
 import Stripe from "stripe";
 import { requiredEnv } from "@/lib/env";
-import { conflict, notFound } from "../shared/errors";
+import { AppError, conflict, notFound } from "../shared/errors";
 import { checkoutSchema, type CheckoutInput } from "./schemas";
 
 type StripeSubscriptionStatus = Stripe.Subscription.Status;
+
+export function isStripeConfigured() {
+  return Boolean(
+    process.env.STRIPE_SECRET_KEY &&
+      process.env.STRIPE_MONTHLY_PRICE_ID &&
+      process.env.STRIPE_YEARLY_PRICE_ID
+  );
+}
 
 export function mapStripeSubscriptionStatus(status: StripeSubscriptionStatus): Subscription["status"] {
   if (status === "active" || status === "trialing") {
@@ -62,6 +70,10 @@ async function findUserIdForCustomer(customerId: string) {
 }
 
 export async function createCheckoutSession(userId: string, email: string, input: CheckoutInput) {
+  if (!isStripeConfigured()) {
+    throw new AppError("Stripe billing is not configured for this deployment", 503, "billing_unavailable");
+  }
+
   const values = checkoutSchema.parse(input);
   const stripe = getStripe();
   const priceId = values.plan === "yearly" ? requiredEnv("STRIPE_YEARLY_PRICE_ID") : requiredEnv("STRIPE_MONTHLY_PRICE_ID");
@@ -101,6 +113,10 @@ export async function createCheckoutSession(userId: string, email: string, input
 }
 
 export async function createBillingPortalSession(subscription: Subscription) {
+  if (!isStripeConfigured()) {
+    throw new AppError("Stripe billing is not configured for this deployment", 503, "billing_unavailable");
+  }
+
   const stripe = getStripe();
   const returnPath = process.env.STRIPE_BILLING_PORTAL_RETURN_PATH ?? "/dashboard";
 
@@ -146,6 +162,10 @@ export async function syncStripeSubscription(subscription: Stripe.Subscription, 
 }
 
 export async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
+  if (!isStripeConfigured()) {
+    return null;
+  }
+
   const subscriptionId = typeof session.subscription === "string" ? session.subscription : session.subscription?.id;
 
   if (!subscriptionId) {

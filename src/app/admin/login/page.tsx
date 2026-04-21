@@ -1,82 +1,65 @@
-import { redirect } from 'next/navigation';
-import { signInWithPassword } from '@/modules/auth/server';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { signInWithPassword } from "@/modules/auth/server";
+
 export const metadata = {
-  title: 'Admin Login'
+  title: "Admin Login"
 };
 
 export default async function AdminLoginPage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const sp = await searchParams;
+  const params = await searchParams;
+
   async function handleLogin(formData: FormData) {
-    'use server';
-    
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    
+    "use server";
+
+    const email = String(formData.get("email") ?? "");
+    const password = String(formData.get("password") ?? "");
+
     try {
       await signInWithPassword({ email, password });
-      redirect('/admin');
-    } catch (error) {
-      console.error('Admin login failed:', error);
-      redirect('/admin/login?error=invalid');
+      redirect("/admin");
+    } catch {
+      redirect("/admin/login?error=invalid");
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 px-4 py-12 sm:px-6 lg:px-8">
+    <main className="mesh-bg flex min-h-screen items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-1">
-{sp.error && (
-            <div className="rounded-md border border-destructive bg-destructive/10 p-4 text-sm text-destructive-foreground mb-4">
-              Invalid email or password. Please try again.
-            </div>
-          )}
-          <CardTitle className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
-            Admin Login
-          </CardTitle>
-          <CardDescription className="text-center">
-            Secure access to admin dashboard
-          </CardDescription>
+        <CardHeader className="space-y-2">
+          <CardTitle className="text-center text-2xl font-bold">Admin Login</CardTitle>
+          <CardDescription className="text-center">Secure access to the control panel.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
+          {params.error ? (
+            <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              Invalid email or password.
+            </div>
+          ) : null}
           <form action={handleLogin} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                name="email" 
-                type="email" 
-                placeholder="utkarsh@gmail.com"
-                required 
-                className="h-11"
-              />
+              <Input id="email" name="email" type="email" required className="h-11" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input 
-                id="password" 
-                name="password" 
-                type="password" 
-                placeholder="utkarsh@12345" 
-                required 
-                className="h-11"
-              />
+              <Input id="password" name="password" type="password" required className="h-11" />
             </div>
-            <Button type="submit" className="w-full h-11 bg-orange-600 hover:bg-orange-700">
+            <Button type="submit" className="w-full h-11">
               Sign in
             </Button>
           </form>
-          
-          <div className="text-xs text-center text-muted-foreground pt-4 border-t">
-            <Link href="/" className="hover:underline">← Back to app</Link>
+          <div className="border-t pt-4 text-center text-xs text-muted-foreground">
+            <Link href="/" className="hover:underline">
+              Back to app
+            </Link>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }
-

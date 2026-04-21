@@ -1,5 +1,4 @@
 import { createServerClient } from "@supabase/ssr";
-import { requireAdmin } from "@/modules/auth/server";
 import { type NextRequest, NextResponse } from "next/server";
 
 const protectedPrefixes = ["/dashboard", "/scores", "/charity", "/draws", "/winners"];
@@ -40,7 +39,6 @@ export async function middleware(request: NextRequest) {
   const isAdminRoute = adminPrefixes.some((prefix) => pathname.startsWith(prefix));
   const isAuthPage = authPrefixes.some((prefix) => pathname.startsWith(prefix));
 
-  // Regular protected routes (login required)
   if (!user && isProtected) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/sign-in";
@@ -48,17 +46,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // Admin routes (admin role required)
-  if (isAdminRoute && user) {
-    try {
-      const context = await requireAdmin(); // From auth/server
-      // Admin access granted
-    } catch {
-      // Not admin → redirect to dashboard
-      const redirectUrl = request.nextUrl.clone();
-      redirectUrl.pathname = "/dashboard";
-      return NextResponse.redirect(redirectUrl);
-    }
+  if (!user && isAdminRoute && pathname !== "/admin/login") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.pathname = "/admin/login";
+    redirectUrl.searchParams.set("next", pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
   if (user && isAuthPage) {

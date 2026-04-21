@@ -35,11 +35,11 @@ export function AppShell({ context, children }: { context: AuthContext; children
               </Button>
             ))}
             <Button asChild variant="ghost" className="w-full justify-start">
-                <Link href="/admin/login">
-                  <Shield />
-                  Admin Panel
-                </Link>
-              </Button>
+              <Link href={context.profile.role === "admin" ? "/admin" : "/admin/login"}>
+                <Shield />
+                Admin Panel
+              </Link>
+            </Button>
           </nav>
           <div className="mt-auto rounded-lg border bg-card p-3">
             <div className="flex items-center gap-3">

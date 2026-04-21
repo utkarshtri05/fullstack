@@ -3,6 +3,7 @@ import { AppShell } from "@/components/app-shell";
 import { MetricCard } from "@/components/metric-card";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BillingPanel } from "@/modules/billing/components/billing-panel";
+import { isStripeConfigured } from "@/modules/billing/service";
 import { getCurrentUser } from "@/modules/auth/server";
 import { getUserAnalytics } from "@/modules/analytics/service";
 import { listPublishedDraws } from "@/modules/draws/service";
@@ -43,7 +44,7 @@ export default async function DashboardPage() {
           <MetricCard title="Pending payouts" value={formatCurrency(analytics.pendingPayoutCents)} detail="Approved and awaiting payment" />
         </div>
         <div className="grid gap-5 xl:grid-cols-[1fr_380px]">
-          <BillingPanel subscription={context.subscription} />
+          <BillingPanel subscription={context.subscription} configured={isStripeConfigured()} />
           <Card>
             <CardHeader>
               <CardTitle>Latest Draw</CardTitle>

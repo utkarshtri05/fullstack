@@ -11,9 +11,10 @@ import { formatDate } from "@/lib/utils";
 
 type BillingPanelProps = {
   subscription: Subscription | null;
+  configured?: boolean;
 };
 
-export function BillingPanel({ subscription }: BillingPanelProps) {
+export function BillingPanel({ subscription, configured = true }: BillingPanelProps) {
   const [loading, setLoading] = useState<"monthly" | "yearly" | "portal" | null>(null);
   const active = subscription?.status === "active" && subscription.currentPeriodEnd.getTime() > Date.now();
 
@@ -65,20 +66,22 @@ export function BillingPanel({ subscription }: BillingPanelProps) {
             <span className="text-sm text-muted-foreground">
               {subscription.planType} renews {formatDate(subscription.currentPeriodEnd)}
             </span>
+          ) : !configured ? (
+            <span className="text-sm text-muted-foreground">Stripe is not configured on this deployment yet.</span>
           ) : (
             <span className="text-sm text-muted-foreground">Choose a plan to unlock score entry.</span>
           )}
         </div>
         <div className="grid gap-2 sm:grid-cols-3">
-          <Button onClick={() => startCheckout("monthly")} disabled={loading !== null || active}>
+          <Button onClick={() => startCheckout("monthly")} disabled={loading !== null || active || !configured}>
             {loading === "monthly" ? <Loader2 className="animate-spin" /> : null}
             Monthly
           </Button>
-          <Button variant="secondary" onClick={() => startCheckout("yearly")} disabled={loading !== null || active}>
+          <Button variant="secondary" onClick={() => startCheckout("yearly")} disabled={loading !== null || active || !configured}>
             {loading === "yearly" ? <Loader2 className="animate-spin" /> : null}
             Yearly
           </Button>
-          <Button variant="outline" onClick={openPortal} disabled={loading !== null || !subscription}>
+          <Button variant="outline" onClick={openPortal} disabled={loading !== null || !subscription || !configured}>
             {loading === "portal" ? <Loader2 className="animate-spin" /> : null}
             Portal
           </Button>

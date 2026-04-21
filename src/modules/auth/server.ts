@@ -149,7 +149,7 @@ export async function signInWithPassword({ email, password }: { email: string; p
   });
   
   if (error || !data.session) {
-    throw unauthorized('Invalid credentials');
+    throw unauthorized();
   }
 }
 
