@@ -4,15 +4,10 @@ interface MetricCardProps {
   title: string;
   value: string | number;
   trend?: string;
+  changeType?: "positive" | "negative";
 }
 
-export function MetricCard({ title, value, trend }: MetricCardProps) {
-  MetricCard.Skeleton = function Skeleton() {
-    return (
-      <div className="h-[110px] rounded-xl border bg-card p-6 shadow-sm animate-pulse" />
-    );
-  };
-
+const MetricCard = ({ title, value, trend }: MetricCardProps) => {
   return (
     <div className="group h-[110px] rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md hover:shadow-orange-500/10 border-orange-50">
       <div className="flex items-center justify-between">
@@ -29,5 +24,11 @@ export function MetricCard({ title, value, trend }: MetricCardProps) {
       </div>
     </div>
   );
-}
+};
+
+MetricCard.Skeleton = () => (
+  <div className="h-[110px] rounded-xl border bg-muted animate-pulse" />
+);
+
+export { MetricCard };
 

@@ -48,6 +48,7 @@ export default async function AdminDashboardPage() {
           <MetricCard title="Published Draws" value={metrics.publishedDraws} />
         </div>
         <AdminScoreChart data={metrics.scoreSeries} />
+
         <AdminConsole draws={draws} charities={charities} pendingProofs={pendingProofs} />
       </div>
     </AppShell>

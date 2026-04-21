@@ -37,26 +37,28 @@ export default async function AdminDashboardPage() {
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           <Suspense fallback={<MetricCard.Skeleton />}>
-            <MetricCard title="Total Users" value="$2,340" change="+12%" changeType="positive" />
+            <MetricCard title="Total Users" value="2,340" trend="+12%" />
           </Suspense>
           <Suspense fallback={<MetricCard.Skeleton />}>
-            <MetricCard title="Active Subs" value="127" change="-2%" changeType="negative" />
+            <MetricCard title="Active Subs" value="127" trend="-2%" />
           </Suspense>
           <Suspense fallback={<MetricCard.Skeleton />}>
-            <MetricCard title="Revenue" value="$12.5k" change="+20%" changeType="positive" />
+            <MetricCard title="Revenue" value="$12.5k" trend="+20%" />
           </Suspense>
           <Suspense fallback={<MetricCard.Skeleton />}>
-            <MetricCard title="Charity" value="$3.2k" change="+8%" changeType="positive" />
+            <MetricCard title="Charity" value="$3.2k" trend="+8%" />
           </Suspense>
           <Suspense fallback={<MetricCard.Skeleton />}>
-            <MetricCard title="Pending" value="14" change="+3" changeType="negative" />
+            <MetricCard title="Pending" value="14" trend="+3" />
           </Suspense>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <Suspense fallback={<div className="h-64 bg-muted rounded-xl animate-pulse" />}>
-              <AdminScoreChart />
+
+            <AdminScoreChart data={[]} />
+
             </Suspense>
           </div>
           <div className="space-y-6">

@@ -22,22 +22,23 @@ export async function getAdminMetrics() {
     .from(payouts)
     .where(eq(payouts.status, "pending"));
 
-  // Mock score series for chart
+  // Score series for AdminScoreChart (date/total format)
   const scoreSeries = [
-    { name: "Jan", users: 400 },
-    { name: "Feb", users: 300 },
-    { name: "Mar", users: 500 },
-    { name: "Apr", users: 280 },
+    { date: "2024-01", total: 400 },
+    { date: "2024-02", total: 300 },
+    { date: "2024-03", total: 500 },
+    { date: "2024-04", total: 280 },
   ];
 
   return {
-    userCount: userCount.count,
-    activeSubscriptions: activeSubscriptions.count,
-    publishedDraws: publishedDraws.count,
-    pendingProofs: pendingProofs.count,
+    userCount: Number(userCount.count),
+    activeSubscriptions: Number(activeSubscriptions.count),
+    publishedDraws: Number(publishedDraws.count),
+    pendingProofs: Number(pendingProofs.count),
     pendingPayoutCents: pendingPayoutCents.total || 0,
     scoreSeries
   };
+
 }
 
 export async function getUserAnalytics(userId: string) {
