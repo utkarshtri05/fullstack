@@ -62,4 +62,5 @@ npm run dev
 - Stripe-ready subscriptions
 
 **Error Fix:** `.env.local` banao Supabase vars se!
+live preview - https://fullstack-ashy-five.vercel.app
 
